@@ -55,6 +55,10 @@ describe('UPDATE builder', () => {
     });
 
     describe('build query', () => {
+        it('need to call table() first', () => {
+            expect(() => inst.toString()).toThrow();
+        });
+
         it('need to call set() first', () => {
             inst.table('table');
             expect(() => inst.toString()).toThrow();

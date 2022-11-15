@@ -16,6 +16,7 @@
         "@types/node": "^18.8.3",
         "@typescript-eslint/eslint-plugin": "^5.41.0",
         "@typescript-eslint/parser": "^5.41.0",
+        "@vitest/coverage-c8": "^0.25.2",
         "benchmark": "^2.1.4",
         "documentation": "^14.0.0",
         "eslint": "^8.24.0",
@@ -40,7 +41,7 @@
     ],
     "scripts": {
         "clean": "rimraf type-definitions && rimraf lib",
-        "test": "jest",
+        "test": "vitest --coverage",
         "test-performance": "node performance/select.js",
         "build": "yarn clean && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
         "prepublish": "npm run build",

@@ -752,6 +752,25 @@ describe('Blocks', () => {
         });
 
         describe('_set()', () => {
+            it('should throw an error if field values are called first', () => {
+                inst._setFieldsRows([
+                    {
+                        field1: 'value1',
+                        field2: 'value2',
+                        field3: 'value3',
+                    },
+                    {
+                        field1: 'value21',
+                        field2: 'value22',
+                        field3: 'value23',
+                    },
+                ]);
+
+                expect(() => inst._set('field1', 'value1', { dummy: true })).toThrowError(
+                    'Cannot set multiple rows of fields this way.'
+                );
+            });
+
             it('saves inputs', () => {
                 inst._set('field1', 'value1', { dummy: 1 });
                 inst._set('field2', 'value2', { dummy: 2 });
@@ -782,6 +801,12 @@ describe('Blocks', () => {
         });
 
         describe('_setFields()', () => {
+            it('should throw an error if set fields called with undefined', () => {
+                expect(() => {
+                    inst._setFields();
+                }).toThrowError(`Expected an object but got undefined`);
+            });
+
             it('saves inputs', () => {
                 inst._setFields({
                     field1: 'value1',
@@ -813,6 +838,10 @@ describe('Blocks', () => {
         });
 
         describe('_setFieldsRows()', () => {
+            it('should throw an error if rows no an array', () => {
+                expect(() => inst._setFieldsRows()).toThrowError('Expected an array of objects but got undefined');
+            });
+
             it('saves inputs', () => {
                 inst._setFieldsRows([
                     {
@@ -1830,6 +1859,61 @@ describe('Blocks', () => {
                 ];
 
                 areEqual(inst._joins, expected);
+            });
+        });
+
+        describe('right_join()', () => {
+            it('calls join()', () => {
+                const joinSpy = mocker.stub(inst, 'join');
+
+                inst.right_join('t', 'a', 'c');
+
+                expect(joinSpy.calledOnce).toBeTruthy();
+                expect(joinSpy.calledWithExactly('t', 'a', 'c', 'RIGHT')).toBeTruthy();
+            });
+        });
+
+        describe('outer_join()', () => {
+            it('calls join()', () => {
+                const joinSpy = mocker.stub(inst, 'join');
+
+                inst.outer_join('t', 'a', 'c');
+
+                expect(joinSpy.calledOnce).toBeTruthy();
+                expect(joinSpy.calledWithExactly('t', 'a', 'c', 'OUTER')).toBeTruthy();
+            });
+        });
+
+        describe('left_outer_join()', () => {
+            it('calls join()', () => {
+                const joinSpy = mocker.stub(inst, 'join');
+
+                inst.left_outer_join('t', 'a', 'c');
+
+                expect(joinSpy.calledOnce).toBeTruthy();
+                expect(joinSpy.calledWithExactly('t', 'a', 'c', 'LEFT OUTER')).toBeTruthy();
+            });
+        });
+
+        describe('full_join()', () => {
+            it('calls join()', () => {
+                const joinSpy = mocker.stub(inst, 'join');
+
+                inst.full_join('t', 'a', 'c');
+
+                expect(joinSpy.calledOnce).toBeTruthy();
+                expect(joinSpy.calledWithExactly('t', 'a', 'c', 'FULL')).toBeTruthy();
+            });
+        });
+
+        describe('cross_join()', () => {
+            it('calls join()', () => {
+                const joinSpy = mocker.stub(inst, 'join');
+
+                inst.cross_join('t', 'a', 'c');
+
+                expect(joinSpy.calledOnce).toBeTruthy();
+                expect(joinSpy.calledWithExactly('t', 'a', 'c', 'CROSS')).toBeTruthy();
             });
         });
 

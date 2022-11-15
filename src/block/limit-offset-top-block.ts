@@ -94,8 +94,9 @@ export class LimitOffsetTopBlock extends Block {
                 this._parent = parent;
             }
 
-            _toParamString(options: Options) {
-                return this._parent._toParamString(options);
+            /* c8 ignore next 3 */
+            _toParamString(options: Options): { text: string; values: any[] } {
+                throw new Error('Not implemented');
             }
         };
 
@@ -174,6 +175,7 @@ export class LimitOffsetTopBlock extends Block {
         return new this.OffsetBlock(this);
     }
 
+    /* c8 ignore next 3 */
     _toParamString(options: Options): { text: string; values: any[] } {
         throw new Error('Not implemented');
     }

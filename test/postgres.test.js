@@ -25,6 +25,15 @@ describe('Postgres flavour', () => {
             inst = squel.insert();
         });
 
+        it('should not add an equal sign if field is undefined', () => {
+            inst.into('table').set('field', 1).set('field2', 2).onConflict('field', { field: undefined });
+
+            areSame(
+                inst.toString(),
+                'INSERT INTO table (field, field2) VALUES (1, 2) ON CONFLICT (field) DO UPDATE SET field'
+            );
+        });
+
         describe('>> into(table).set(field, 1).set(field,2).onConflict("field", {field2:2})', () => {
             beforeEach(() => {
                 inst.into('table').set('field', 1).set('field2', 2).onConflict('field', { field2: 2 });

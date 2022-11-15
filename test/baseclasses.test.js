@@ -37,6 +37,10 @@ describe('Base Classes', () => {
         expect(squel.flavour).toBeNull();
     });
 
+    it('should throw error when switching to an unknown flavour', () => {
+        expect(() => squel.useFlavour('foo')).toThrow();
+    });
+
     describe('Cloneable Base Class', () => {
         it('Clone', () => {
             class Child extends Cloneable {
@@ -73,7 +77,7 @@ describe('Base Classes', () => {
         });
     });
 
-    describe('Default query builder options', () => {
+    it('Default query builder options', () => {
         areEqual(
             {
                 autoQuoteTableNames: false,
@@ -921,7 +925,7 @@ describe('Base Classes', () => {
 
         describe('_buildString', () => {
             it('empty', () => {
-                areEqual(inst._buildString('', []), {
+                areEqual(inst._buildString(''), {
                     text: '',
                     values: [],
                 });
@@ -1346,6 +1350,7 @@ describe('Base Classes', () => {
                 inst = new QueryBuilder({
                     numberedParameters: true,
                     numberedParametersPrefix: '&%',
+                    numberedParametersStartAt: undefined,
                 });
 
                 inst.blocks = [new WhereBlock({})];

@@ -34,7 +34,7 @@ export class Case extends BaseBuilder {
     when(expression, ...values) {
         this._cases.unshift({
             expression,
-            values: values || [],
+            values: values,
         });
 
         return this;

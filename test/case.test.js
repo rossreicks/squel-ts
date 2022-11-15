@@ -21,6 +21,10 @@ describe('Case expression builder base class', () => {
         areEqual('NULL', inst.toString());
     });
 
+    it('when() needs to be called first', () => {
+        expect(() => inst.then('foo')).toThrow();
+    });
+
     describe('options', () => {
         it('default options', () => {
             areEqual(DefaultQueryBuilderOptions, inst.options);
@@ -82,6 +86,21 @@ describe('Case expression builder base class', () => {
             areEqual(inst.toParam(), {
                 text: "CASE name WHEN (?) THEN 'bar' ELSE NULL END",
                 values: ['foo'],
+            });
+        });
+    });
+
+    describe('field case no param', () => {
+        beforeEach(() => {
+            inst = squel.case('name').when('foo').then('bar');
+        });
+        it('toString', () => {
+            areEqual(inst.toString(), "CASE name WHEN (foo) THEN 'bar' ELSE NULL END");
+        });
+        it('toParam', () => {
+            areEqual(inst.toParam(), {
+                text: "CASE name WHEN (foo) THEN 'bar' ELSE NULL END",
+                values: [],
             });
         });
     });

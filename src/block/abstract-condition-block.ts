@@ -28,7 +28,7 @@ export abstract class AbstractConditionBlock extends Block {
 
         this._conditions.push({
             expr: condition,
-            values: values || [],
+            values: values,
         });
     }
 

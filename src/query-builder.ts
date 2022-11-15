@@ -96,7 +96,7 @@ export class QueryBuilder extends BaseBuilder {
 
         if (!options.nested) {
             if (options.numberedParameters) {
-                let i = undefined !== options.numberedParametersStartAt ? options.numberedParametersStartAt : 1;
+                let i = undefined === options.numberedParametersStartAt ? 1 : options.numberedParametersStartAt;
 
                 // construct regex for searching
                 const regex = options.parameterCharacter.replace(/[-[\]{}()*+?.,\\^$|*\s]/g, '\\$&');

@@ -8,7 +8,7 @@ let mocker;
 let inst = squel.useFlavour('mysql').insert();
 
 const areSame = function (actual, expected, message) {
-    return expect(actual).toEqual(expected);
+    expect(actual).toEqual(expected);
 };
 
 describe('MySQL flavour', () => {
@@ -32,7 +32,7 @@ describe('MySQL flavour', () => {
         });
 
         it('instanceof of AbstractSetFieldBlock', () => {
-            return expect(inst).toBeInstanceOf(AbstractSetFieldBlock);
+            expect(inst).toBeInstanceOf(AbstractSetFieldBlock);
         });
 
         describe('onDupUpdate()', () => {
@@ -41,7 +41,11 @@ describe('MySQL flavour', () => {
 
                 inst.onDupUpdate('f', 'v', { dummy: true });
 
-                return expect(spy.calledWithExactly('f', 'v', { dummy: true })).toBeTruthy();
+                expect(spy.calledWithExactly('f', 'v', { dummy: true })).toBeTruthy();
+            });
+
+            it('return empty string when empty string is passed', () => {
+                expect(inst.onDupUpdate('').toString()).toEqual('');
             });
         });
 
@@ -50,17 +54,17 @@ describe('MySQL flavour', () => {
                 inst.onDupUpdate('field1 = field1 + 1');
                 inst.onDupUpdate('field2', 'value2', { dummy: true });
 
-                return inst.onDupUpdate('field3', 'value3');
+                inst.onDupUpdate('field3', 'value3');
             });
 
             it('non-parameterized', () => {
-                return areSame(inst._toParamString(), {
+                areSame(inst._toParamString(), {
                     text: "ON DUPLICATE KEY UPDATE field1 = field1 + 1, field2 = 'value2', field3 = 'value3'",
                     values: [],
                 });
             });
             it('parameterized()', () => {
-                return areSame(inst._toParamString({ buildParameterized: true }), {
+                areSame(inst._toParamString({ buildParameterized: true }), {
                     text: 'ON DUPLICATE KEY UPDATE field1 = field1 + 1, field2 = ?, field3 = ?',
                     values: ['value2', 'value3'],
                 });
@@ -75,22 +79,21 @@ describe('MySQL flavour', () => {
 
         describe('>> into(table).set(field, 1).set(field1, 2).onDupUpdate(field, 5).onDupUpdate(field1, "str")', () => {
             beforeEach(() => {
-                return inst
-                    .into('table')
+                inst.into('table')
                     .set('field', 1)
                     .set('field1', 2)
                     .onDupUpdate('field', 5)
                     .onDupUpdate('field1', 'str');
             });
             it('toString', () => {
-                return areSame(
+                areSame(
                     inst.toString(),
                     "INSERT INTO table (field, field1) VALUES (1, 2) ON DUPLICATE KEY UPDATE field = 5, field1 = 'str'"
                 );
             });
 
             it('toParam', () => {
-                return areSame(inst.toParam(), {
+                areSame(inst.toParam(), {
                     text: 'INSERT INTO table (field, field1) VALUES (?, ?) ON DUPLICATE KEY UPDATE field = ?, field1 = ?',
                     values: [1, 2, 5, 'str'],
                 });
@@ -99,16 +102,13 @@ describe('MySQL flavour', () => {
 
         describe('>> into(table).set(field2, 3).onDupUpdate(field2, "str", { dontQuote: true })', () => {
             beforeEach(() => {
-                return inst.into('table').set('field2', 3).onDupUpdate('field2', 'str', { dontQuote: true });
+                inst.into('table').set('field2', 3).onDupUpdate('field2', 'str', { dontQuote: true });
             });
             it('toString', () => {
-                return areSame(
-                    inst.toString(),
-                    'INSERT INTO table (field2) VALUES (3) ON DUPLICATE KEY UPDATE field2 = str'
-                );
+                areSame(inst.toString(), 'INSERT INTO table (field2) VALUES (3) ON DUPLICATE KEY UPDATE field2 = str');
             });
             it('toParam', () => {
-                return areSame(inst.toParam(), {
+                areSame(inst.toParam(), {
                     text: 'INSERT INTO table (field2) VALUES (?) ON DUPLICATE KEY UPDATE field2 = ?',
                     values: [3, 'str'],
                 });
@@ -123,14 +123,14 @@ describe('MySQL flavour', () => {
 
         describe('>> into(table).set(field, 1).set(field1, 2)', () => {
             beforeEach(() => {
-                return inst.into('table').set('field', 1).set('field1', 2);
+                inst.into('table').set('field', 1).set('field1', 2);
             });
             it('toString', () => {
-                return areSame(inst.toString(), 'REPLACE INTO table (field, field1) VALUES (1, 2)');
+                areSame(inst.toString(), 'REPLACE INTO table (field, field1) VALUES (1, 2)');
             });
 
             it('toParam', () => {
-                return areSame(inst.toParam(), {
+                areSame(inst.toParam(), {
                     text: 'REPLACE INTO table (field, field1) VALUES (?, ?)',
                     values: [1, 2],
                 });

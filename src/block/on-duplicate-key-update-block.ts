@@ -21,12 +21,14 @@ export interface OnDuplicateKeyUpdateMixin {
      *
      * @param limit Index of record to start fetching from.
      */
-    onDupUpdate(name: string, value: any, options?: OnDupUpdateOptions): void;
+    onDupUpdate(name: string, value: any, options?: OnDupUpdateOptions): this;
 }
 
 export class OnDuplicateKeyUpdateBlock extends AbstractSetFieldBlock implements OnDuplicateKeyUpdateMixin {
     onDupUpdate(field, value, options) {
         this._set(field, value, options);
+
+        return this;
     }
 
     _toParamString(options: Options = {}) {

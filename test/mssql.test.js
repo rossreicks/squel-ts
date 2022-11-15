@@ -122,6 +122,15 @@ describe('MSSQL flavour', () => {
                 areSame(inst.toString(), 'INSERT INTO table (field) OUTPUT INSERTED.id VALUES (1)');
             });
         });
+
+        describe('>> into(table).set(field, 1).output(id)', () => {
+            beforeEach(() => {
+                inst.into('table').output(['id', 'name']).set('field', 1);
+            });
+            it('toString', () => {
+                areSame(inst.toString(), 'INSERT INTO table (field) OUTPUT INSERTED.id, INSERTED.name VALUES (1)');
+            });
+        });
     });
 
     describe('UPDATE builder', () => {

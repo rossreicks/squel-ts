@@ -685,6 +685,28 @@ describe('SELECT builder', () => {
             });
         });
 
+        describe('Two Strings No Params', () => {
+            beforeEach(() => {
+                testContext.qry1 = squel.select().field('name').from('students').where('age > 15');
+                testContext.qry2 = squel.select().field('name').from('students').where('age < 6');
+
+                return testContext.qry1.union(testContext.qry2.toString());
+            });
+
+            it('toString', () => {
+                areEqual(
+                    testContext.qry1.toString(),
+                    `SELECT name FROM students WHERE (age > 15) UNION SELECT name FROM students WHERE (age < 6)`
+                );
+            });
+            it('toParam', () => {
+                areEqual(testContext.qry1.toParam(), {
+                    text: 'SELECT name FROM students WHERE (age > 15) UNION SELECT name FROM students WHERE (age < 6)',
+                    values: [],
+                });
+            });
+        });
+
         describe('Two Queries with Params', () => {
             beforeEach(() => {
                 testContext.qry1 = squel.select().field('name').from('students').where('age > ?', 15);
@@ -756,62 +778,62 @@ describe('SELECT builder', () => {
                 });
             });
         });
+    });
 
-        describe('Where builder expression', () => {
-            beforeEach(() => {
-                inst = squel
-                    .select()
-                    .from('table')
-                    .where('a = ?', 5)
-                    .where(squel.str('EXISTS(?)', squel.select().from('blah').where('b > ?', 6)));
-            });
-            it('toString', () => {
-                areEqual(
-                    inst.toString(),
-                    `SELECT * FROM table WHERE (a = 5) AND (EXISTS((SELECT * FROM blah WHERE (b > 6))))`
-                );
-            });
-            it('toParam', () => {
-                areEqual(inst.toParam(), {
-                    text: 'SELECT * FROM table WHERE (a = ?) AND (EXISTS((SELECT * FROM blah WHERE (b > ?))))',
-                    values: [5, 6],
-                });
+    describe('Where builder expression', () => {
+        beforeEach(() => {
+            inst = squel
+                .select()
+                .from('table')
+                .where('a = ?', 5)
+                .where(squel.str('EXISTS(?)', squel.select().from('blah').where('b > ?', 6)));
+        });
+        it('toString', () => {
+            areEqual(
+                inst.toString(),
+                `SELECT * FROM table WHERE (a = 5) AND (EXISTS((SELECT * FROM blah WHERE (b > 6))))`
+            );
+        });
+        it('toParam', () => {
+            areEqual(inst.toParam(), {
+                text: 'SELECT * FROM table WHERE (a = ?) AND (EXISTS((SELECT * FROM blah WHERE (b > ?))))',
+                values: [5, 6],
             });
         });
+    });
 
-        describe('Join on builder expression', () => {
-            beforeEach(() => {
-                inst = squel
-                    .select()
-                    .from('table')
-                    .join('table2', 't2', squel.str('EXISTS(?)', squel.select().from('blah').where('b > ?', 6)));
-            });
-            it('toString', () => {
-                areEqual(
-                    inst.toString(),
-                    `SELECT * FROM table INNER JOIN table2 \`t2\` ON (EXISTS((SELECT * FROM blah WHERE (b > 6))))`
-                );
-            });
-            it('toParam', () => {
-                areEqual(inst.toParam(), {
-                    text: 'SELECT * FROM table INNER JOIN table2 `t2` ON (EXISTS((SELECT * FROM blah WHERE (b > ?))))',
-                    values: [6],
-                });
+    describe('Join on builder expression', () => {
+        beforeEach(() => {
+            inst = squel
+                .select()
+                .from('table')
+                .join('table2', 't2', squel.str('EXISTS(?)', squel.select().from('blah').where('b > ?', 6)));
+        });
+        it('toString', () => {
+            areEqual(
+                inst.toString(),
+                `SELECT * FROM table INNER JOIN table2 \`t2\` ON (EXISTS((SELECT * FROM blah WHERE (b > 6))))`
+            );
+        });
+        it('toParam', () => {
+            areEqual(inst.toParam(), {
+                text: 'SELECT * FROM table INNER JOIN table2 `t2` ON (EXISTS((SELECT * FROM blah WHERE (b > ?))))',
+                values: [6],
             });
         });
+    });
 
-        describe('#301 - FROM rstr() with nesting', () => {
-            beforeEach(() => {
-                inst = squel.select().from(squel.rstr('generate_series(?,?,?)', 1, 10, 2), 'tblfn(odds)');
-            });
-            it('toString', () => {
-                areEqual(inst.toString(), `SELECT * FROM generate_series(1,10,2) \`tblfn(odds)\``);
-            });
-            it('toParam', () => {
-                areEqual(inst.toParam(), {
-                    text: 'SELECT * FROM generate_series(?,?,?) `tblfn(odds)`',
-                    values: [1, 10, 2],
-                });
+    describe('#301 - FROM rstr() with nesting', () => {
+        beforeEach(() => {
+            inst = squel.select().from(squel.rstr('generate_series(?,?,?)', 1, 10, 2), 'tblfn(odds)');
+        });
+        it('toString', () => {
+            areEqual(inst.toString(), `SELECT * FROM generate_series(1,10,2) \`tblfn(odds)\``);
+        });
+        it('toParam', () => {
+            areEqual(inst.toParam(), {
+                text: 'SELECT * FROM generate_series(?,?,?) `tblfn(odds)`',
+                values: [1, 10, 2],
             });
         });
     });

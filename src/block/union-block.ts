@@ -65,7 +65,7 @@ export class UnionBlock extends Block implements UnionMixin {
                 tableStr = ret.text;
                 ret.values.forEach((value) => totalValues.push(value));
             } else {
-                totalStr = this._formatTableName(table as string);
+                tableStr = this._formatTableName(table as string);
             }
 
             totalStr += `${type} ${tableStr}`;

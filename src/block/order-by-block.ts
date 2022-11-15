@@ -53,7 +53,7 @@ export class OrderByBlock extends Block implements OrderByMixin {
         this._orders.push({
             field,
             dir: direction,
-            values: values || [],
+            values: values,
         });
 
         return this;
